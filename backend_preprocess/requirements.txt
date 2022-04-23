@@ -1,0 +1,5 @@
+model-creator-bird-sing
+librosa
+fastapi
+numpy
+"uvicorn[standard]"
