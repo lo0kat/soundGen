@@ -1,0 +1,5 @@
+services:
+  training-app:
+    build: ./backend/machineLearning/
+    volumes:
+      - "./backend/machineLearning/train_app/:/code"
