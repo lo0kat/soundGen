@@ -1,5 +1,4 @@
-model-creator-bird-sing
-librosa
+soundfile
 fastapi
 numpy
 "uvicorn[standard]"
