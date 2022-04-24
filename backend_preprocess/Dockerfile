@@ -1,4 +1,4 @@
-FROM python:3.10.1-slim
+FROM python:3.7.3-slim
 
 WORKDIR /app
 
@@ -9,4 +9,4 @@ COPY . .
 
 EXPOSE 8080
 
-CMD ["python", "main.py"]
+CMD ["python3", "main.py"]

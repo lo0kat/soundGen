@@ -1,4 +1,3 @@
-soundfile
+model_creator_bird_sing
 fastapi
-numpy
-"uvicorn[standard]"
+uvicorn[standard]

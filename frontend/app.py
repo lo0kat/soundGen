@@ -18,19 +18,29 @@ def reconvertion_request_res(res):
     return second_trad
 
 
-def greet(text1:str, audio1:tuple, text2:str, audio2:tuple):
-    #Transform the audio
+def greet(text1:str, audio1:tuple, text2:str, audio2:tuple) -> tuple:
+    """
+    Allow you to do :
+        1) The preprocessing
+        2) Compute the spectrogram
+        3) Make the prediction
+    """
+
+    #Prepare data into json for sending
     json_original = {
         text1: [str(audio1[0]), str(list(audio1[1]))],
         text2: [str(audio2[0]), str(list(audio2[1]))]
         }
 
-    #Send samples to the model
+    #Send request to the FastAPI for preprocessing
     res = requests.post("http://127.0.0.1:8000/preprocess", json=json_original)
+    #Convert the response into numbers
     res_converted = reconvertion_request_res(res)
     nb = list(res_converted[text1].keys())[0]
     song = np.array(res_converted[text1][nb], dtype='int16')
     sr = 48000
+
+    #Send samples to the model
 
     return (sr,song)
 
@@ -45,7 +55,7 @@ iface = gr.Interface(fn=greet,
                     outputs="audio",
                     title="Who is the fake bird",
                     description="This is made to see who will imitate the best the birds of hese choice.",)
-                    
+
 
 if __name__ == "__main__":
     app, local_url, share_url = iface.launch()
