@@ -6,9 +6,6 @@ on:
       - train
   pull_request:
 
-defaults:
-  run:
-    working-directory: ./infrastructure
     
 jobs:
   terraform:
@@ -16,7 +13,9 @@ jobs:
     runs-on: ubuntu-20.04
     outputs:
       gpuaddress: ${{ steps.tfoutput.outputs.address }}
-
+    defaults:
+      run:
+        working-directory: ./infrastructure
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -86,7 +85,9 @@ jobs:
     name: "GPU remote Computation"
     needs : terraform
     runs-on: ubuntu-20.04
-
+    defaults:
+      run:
+        working-directory: ./infrastructure
     steps:
       - name: Test gpu address output
         if: github.ref == 'refs/heads/train' && github.event_name == 'push'
