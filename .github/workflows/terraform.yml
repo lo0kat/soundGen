@@ -77,7 +77,9 @@ jobs:
       - name : Terraform output
         id: tf_output
         if: github.ref == 'refs/heads/train' && github.event_name == 'push'
-        run : echo "::set-output name=address::$(terraform output -raw gpu-instance-address)"
+        run : |
+         export GPUADDRESS=$(terraform output -raw gpu-instance-address)
+         echo "::set-output name=address::$GPUADDRESS"
 
 
   modelcomputation:
@@ -98,7 +100,7 @@ jobs:
 
       - name: Test gpu address output
         if: github.ref == 'refs/heads/train' && github.event_name == 'push'
-        run: echo ${{ needs.terraform.outputs.gpuaddress }}
+        run: echo ${{needs.terraform.outputs.gpuaddress}}
       
       - name : SSH Connection
         if: github.ref == 'refs/heads/train' && github.event_name == 'push'
