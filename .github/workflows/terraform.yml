@@ -9,10 +9,9 @@ on:
     
 jobs:
   terraform:
-    name: "Terraform"
     runs-on: ubuntu-20.04
     outputs:
-      gpuaddress: ${{ steps.tfoutput.outputs.address }}
+      gpuaddress: ${{ steps.tf_output.outputs.address }}
     defaults:
       run:
         working-directory: ./infrastructure
@@ -76,13 +75,12 @@ jobs:
         run: terraform apply -auto-approve -input=false
       
       - name : Terraform output
-        id: tfoutput
+        id: tf_output
         if: github.ref == 'refs/heads/train' && github.event_name == 'push'
         run : echo "::set-output name=address::$(terraform output -raw gpu-instance-address)"
 
 
   modelcomputation:
-    name: "GPU remote Computation"
     needs : terraform
     runs-on: ubuntu-20.04
     defaults:
@@ -100,7 +98,7 @@ jobs:
 
       - name: Test gpu address output
         if: github.ref == 'refs/heads/train' && github.event_name == 'push'
-        run: echo "${{ needs.terraform.outputs.gpuaddress }}"
+        run: echo ${{ needs.terraform.outputs.gpuaddress }}
       
       - name : SSH Connection
         if: github.ref == 'refs/heads/train' && github.event_name == 'push'
@@ -109,7 +107,7 @@ jobs:
         
         run : |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{needs.terraform.outputs.gpuaddress}} '
+          ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{ needs.terraform.outputs.gpuaddress }} '
             echo "$(whoami)"
           '
 
