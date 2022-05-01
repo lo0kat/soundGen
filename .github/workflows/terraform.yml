@@ -86,6 +86,7 @@ jobs:
     name: "GPU remote Computation"
     needs : terraform
     runs-on: ubuntu-20.04
+      
     steps:
       - name: Test gpu address output
         if: github.ref == 'refs/heads/train' && github.event_name == 'push'
