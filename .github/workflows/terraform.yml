@@ -83,7 +83,7 @@ jobs:
 
 
   modelcomputation:
-    needs : terraform
+    needs : infra
     runs-on: ubuntu-20.04
     defaults:
       run:
