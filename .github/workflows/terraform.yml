@@ -100,18 +100,19 @@ jobs:
 
       - name: Test gpu address output
         if: github.ref == 'refs/heads/train' && github.event_name == 'push'
-        run: echo ${{needs.terraform.outputs.gpuaddress}}
+        run: echo "${{ needs.terraform.outputs.gpuaddress }}"
       
       - name : SSH Connection
         if: github.ref == 'refs/heads/train' && github.event_name == 'push'
         env:
             PRIVATE_KEY: ${{ secrets.AWS_EC2_PRIVATE_KEY  }}
+        
         run : |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{needs.terraform.outputs.gpuaddress}} '
             echo "$(whoami)"
           '
-          
+
       - name: Terraform Destroy
         if: github.ref == 'refs/heads/train' && github.event_name == 'push'
         run: terraform destroy -auto-approve
