@@ -11,7 +11,7 @@ jobs:
   infra:
     runs-on: ubuntu-20.04
     outputs:
-      gpuaddress: ${{ steps.tf_output.outputs.address }}
+      output1: ${{ steps.tf_output.outputs.address }}
     defaults:
       run:
         working-directory: ./infrastructure
@@ -91,9 +91,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
       - name: Test gpu address output
         if: github.ref == 'refs/heads/train' && github.event_name == 'push'
-        run: echo "${{needs.infra.outputs.gpuaddress}}"
+        run: echo "${{needs.infra.outputs.output1}}"
       
       - name : SSH Connection
         if: github.ref == 'refs/heads/train' && github.event_name == 'push'
@@ -102,7 +103,7 @@ jobs:
         
         run : |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{ needs.infra.outputs.gpuaddress }} '
+          ssh -o StrictHostKeyChecking=no -i private_key ubuntu@ec2-34-242-222-186.eu-west-1.compute.amazonaws.com '
             echo "$(whoami)"
           '
       - name: Setup Terraform
