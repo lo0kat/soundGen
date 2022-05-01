@@ -8,7 +8,7 @@ on:
 
     
 jobs:
-  terraform:
+  infra:
     runs-on: ubuntu-20.04
     outputs:
       gpuaddress: ${{ steps.tf_output.outputs.address }}
@@ -100,7 +100,7 @@ jobs:
 
       - name: Test gpu address output
         if: github.ref == 'refs/heads/train' && github.event_name == 'push'
-        run: echo ${{needs.terraform.outputs.gpuaddress}}
+        run: echo "${{needs.infra.outputs.gpuaddress}}"
       
       - name : SSH Connection
         if: github.ref == 'refs/heads/train' && github.event_name == 'push'
@@ -109,7 +109,7 @@ jobs:
         
         run : |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{ needs.terraform.outputs.gpuaddress }} '
+          ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{ needs.infra.outputs.gpuaddress }} '
             echo "$(whoami)"
           '
 
