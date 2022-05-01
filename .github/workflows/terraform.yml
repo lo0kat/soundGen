@@ -22,6 +22,8 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
+            terraform_wrapper: false
+        with:
           # terraform_version: 0.13.0:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
@@ -78,7 +80,7 @@ jobs:
         id: tf_output
         if: github.ref == 'refs/heads/train' && github.event_name == 'push'
         run : |
-         export GPUADDRESS=$(terraform output -raw gpu-instance-address)
+         export GPUADDRESS=$(terraform output gpu-instance-address)
          echo "::set-output name=address::$GPUADDRESS"
 
 
@@ -103,7 +105,7 @@ jobs:
         
         run : |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ubuntu@ec2-34-242-222-186.eu-west-1.compute.amazonaws.com '
+          ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{needs.infra.outputs.output1}} '
             echo "$(whoami)"
           '
       - name: Setup Terraform
