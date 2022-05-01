@@ -89,7 +89,8 @@ jobs:
       run:
         working-directory: ./infrastructure
     steps:
-
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Test gpu address output
         if: github.ref == 'refs/heads/train' && github.event_name == 'push'
         run: echo "${{needs.infra.outputs.gpuaddress}}"
@@ -104,8 +105,6 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{ needs.infra.outputs.gpuaddress }} '
             echo "$(whoami)"
           '
-      - name: Checkout
-        uses: actions/checkout@v3
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
