@@ -6,13 +6,17 @@ on:
       - train
   pull_request:
 
+defaults:
+  run:
+    working-directory: ./infrastructure
+    
 jobs:
   terraform:
     name: "Terraform"
     runs-on: ubuntu-20.04
-    defaults:
-      run:
-        working-directory: ./infrastructure
+    outputs:
+      gpuaddress: ${{ steps.tfoutput.outputs.address }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -71,7 +75,40 @@ jobs:
       - name: Terraform Apply
         if: github.ref == 'refs/heads/train' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
+      
+      - name : Terraform output
+        id: tfoutput
+        if: github.ref == 'refs/heads/train' && github.event_name == 'push'
+        run : echo "::set-output name=address::$(terraform output -raw gpu-instance-address)"
+
+
+  modelcomputation:
+    name: "GPU remote Computation"
+    needs : terraform
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Test gpu address output
+        if: github.ref == 'refs/heads/train' && github.event_name == 'push'
+        run: echo ${{needs.terraform.outputs.gpuaddress}}
+      
+      - name : SSH Connection
+        if: github.ref == 'refs/heads/train' && github.event_name == 'push'
+        env:
+            PRIVATE_KEY: ${{ secrets.AWS_EC2_PRIVATE_KEY  }}
+        run : |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{needs.terraform.outputs.gpuaddress}} '
+            echo "$(whoami)"
+          '
+      - name: Checkout
+          uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          # terraform_version: 0.13.0:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Terraform Destroy
-        if: github.ref == 'refs/heads/train' && github.event_name == 'push'
-        run: terraform destroy -auto-approve
+      if: github.ref == 'refs/heads/train' && github.event_name == 'push'
+      run: terraform destroy -auto-approve
