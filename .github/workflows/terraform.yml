@@ -106,12 +106,16 @@ jobs:
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{needs.infra.outputs.output1}} '
             echo "$(whoami)"
+            apt-get install -y python3-venv
             git clone https://github.com/lo0kat/soundGen.git
-            ls
             python3 -V
             cd soundGen/backend/model
+            git checkout train
             python3 -m venv MYENV
             pip install -r requirements.txt
+            cd train_app
+            python3 main.py
+            ls
           '
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
