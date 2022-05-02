@@ -93,9 +93,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Test gpu address output
+      - name: Wait 30s for Resource init 
         if: github.ref == 'refs/heads/train' && github.event_name == 'push'
-        run: echo "${{needs.infra.outputs.output1}}"
+        run: sleep 30
       
       - name : SSH Connection
         if: github.ref == 'refs/heads/train' && github.event_name == 'push'
