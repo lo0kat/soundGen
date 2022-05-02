@@ -4,8 +4,6 @@ from tensorflow import keras
 import tempfile
 from utils.save import zip
 
-# Helper libraries
-import numpy as np
 import os
 
 

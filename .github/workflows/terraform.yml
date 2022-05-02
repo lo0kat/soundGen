@@ -108,8 +108,9 @@ jobs:
             echo "$(whoami)"
             git clone https://github.com/lo0kat/soundGen.git
             ls
-            python -V
+            python3 -V
             cd soundGen/backend/model
+            python3 -m venv MYENV
             pip install -r requirements.txt
           '
       - name: Setup Terraform
