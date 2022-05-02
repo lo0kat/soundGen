@@ -107,8 +107,10 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{needs.infra.outputs.output1}} '
             echo "$(whoami)"
             git clone https://github.com/lo0kat/soundGen.git
-            nvcc --version
             ls
+            python -V
+            cd soundGen/backend/model
+            pip install -r requirements.txt
           '
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
