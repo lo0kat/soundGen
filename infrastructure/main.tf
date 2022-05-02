@@ -29,7 +29,7 @@ resource "random_pet" "sg" {}
 
 resource "aws_instance" "web" {
   ami                    = "ami-015ba8cf6eb94ee23"
-  instance_type          = "g4ad.xlarge"
+  instance_type          = "t2.medium"
   key_name               = "ML_ICC_key"
   vpc_security_group_ids = [aws_security_group.web-sg.id]
 
