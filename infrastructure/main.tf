@@ -27,9 +27,9 @@ provider "aws" {
 resource "random_pet" "sg" {}
 
 
-resource "aws_instance" "web" {
+resource "aws_instance" "training_instance" {
   ami                    = "ami-015ba8cf6eb94ee23"
-  instance_type          = "g4dn.xlarge"
+  instance_type          = "t2.medium"
   key_name               = "ML_ICC_key"
   vpc_security_group_ids = [aws_security_group.web-sg.id]
 
@@ -57,6 +57,10 @@ resource "aws_security_group" "web-sg" {
   }
 }
 
+resource "aws_s3_bucket" "model_bucket" {
+  bucket = "dl-model-bucket"
+}
+
 output "gpu-instance-address" {
-  value = aws_instance.web.public_dns
+  value = aws_instance.training_instance.public_dns
 }
