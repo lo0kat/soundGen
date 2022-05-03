@@ -1,6 +1,5 @@
 model-creator-bird-sing
 numpy
 os
-tqdm
 pandas
 mutagen

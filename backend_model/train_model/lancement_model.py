@@ -4,11 +4,11 @@ from tqdm import tqdm
 import pandas as pd
 import config
 from mutagen.wave import WAVE
-
 from model_creator.decoupe import find_chunks, reconstruct_chunks
 from model_creator.preprocess import Loader, Padder, LogSpectrogramExtractor, MinMaxNormaliser, Saver, PreprocessingPipeline
-from model_creator.auto_encoder import Autoencoder
+from model_creator.train import ClassiqueTrain, CreateData, ParameterTuning
 from model_creator import config_default
+from model_creator.preprocess import Data_Recup
 
 def chargement_espece(metadata : pd.DataFrame, nb_espece = None) -> list:
     """
@@ -100,43 +100,11 @@ def creation_spectrogram(espece : str) -> None:
         preprocessing_pipeline = initialisation_pipeline(spec_save_dir, min_max_save_dir)
         preprocessing_pipeline.process(file_dir)
 
-def load_music(species_name):
-    x_train = []
-    for specie in species_name:
-      spectrograms_path = "./preprocessed_data/" + specie + "/spectrograms"
-      
-      for root, _, file_names in os.walk(spectrograms_path):
-          for file_name in file_names:
-              file_path = os.path.join(root, file_name)
-              spectrogram = np.load(file_path) # (n_bins, n_frames)
-              x_train.append(spectrogram)
-
-    x_train = np.array(x_train)
-    x_train = x_train[..., np.newaxis]
-    np.random.shuffle(x_train)
-    
-    return x_train
-
-def train(x_train : np.array, learning_rate : float, batch_size : int, epochs : int):
-    """
-    Start the training
-    """
-
-    autoencoder = Autoencoder(
-        input_shape=(taille_input[0], taille_input[1], 1),
-        conv_filters=(512,256, 128, 64, 32),
-        conv_kernels=(3,3,3,3,2),
-        conv_strides=(2,2,2,2, (2,1)),
-        latent_space_dim=256
-    )
-    autoencoder.summary()
-    autoencoder.compile(learning_rate)
-    history = autoencoder.train(x_train, batch_size, epochs)
-    
-    return autoencoder, history
-
 
 if __name__ == "__main__":
+
+    data_getter = Data_Recup("~/kaggle.json")
+    data_getter.get_songs()
 
     meta_df = pd.read_csv(config.LIEN_METADATA)
     espece = chargement_espece(meta_df, config.NB_ESPECE)
@@ -145,9 +113,11 @@ if __name__ == "__main__":
     creation_spectrogram(espece)
     spec = os.listdir("./preprocessed_data/"+ espece[0] +"/spectrograms")
     taille_input = np.load("./preprocessed_data/"+ espece[0] +"/spectrograms/" + spec[0]).shape
-    x_train = load_music(espece)
-    autoencoder, history = train(x_train, 
-                                config.model_param['learning_rate'], 
-                                config.model_param['batch_size'], 
-                                config.model_param['epochs'])
-    autoencoder.save("model")
+
+    x_train = CreateData(espece).load_music()
+    '''
+    bird_singer = ClassiqueTrain(taille_input)
+    bird_singer.fit_classique(x_train)
+    bird_singer.autoencoder.save("model")
+    '''
+    ParameterTuning(taille_input).tune(x_train)

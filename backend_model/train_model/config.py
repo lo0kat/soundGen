@@ -1,5 +1,5 @@
-LIEN_METADATA = "data/metadata.csv"
-LIEN_DIR_MP3 = "data/mp3/"
+LIEN_METADATA = "metadata.csv"
+LIEN_DIR_MP3 = "mp3/"
 NB_ESPECE = 1
 
 #Parametre pour la découpe
@@ -12,9 +12,3 @@ SILENCE_BAR = -32
 TOO_SHORT_LENGHT = 1.1
 #Too long sing
 TOO_LONG_LENGHT = 5
-
-model_param = {
-    'learning_rate' : 0.00025,
-    'batch_size' : 12,
-    'epochs' : 20,
-}
