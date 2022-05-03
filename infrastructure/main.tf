@@ -58,7 +58,7 @@ resource "aws_security_group" "web-sg" {
 }
 
 resource "aws_s3_bucket" "model_bucket" {
-  bucket = "dl-model-bucket"
+  bucket = "dl-model-bucket-cytech64"
 }
 
 output "gpu-instance-address" {
