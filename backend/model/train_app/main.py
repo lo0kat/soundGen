@@ -2,7 +2,7 @@ import tensorflow as tf
 from tensorflow import keras
 
 import tempfile
-from utils.save import zip
+from utils.save import zip,upload_file
 
 import os
 
@@ -34,7 +34,6 @@ model = keras.Sequential([
 ])
 model.summary()
 
-testing = False
 epochs = 5
 
 model.compile(optimizer='adam', 
@@ -47,9 +46,10 @@ print('\nTest accuracy: {}'.format(test_acc))
 
 
 MODEL_DIR = tempfile.gettempdir()
-version = 5
+version = 6
 export_path = os.path.join(MODEL_DIR, str(version))
 model_zip_name = "v{}".format(version)
+full_file_name = "{}.zip".format(model_zip_name)
 print('export_path = {}\n'.format(export_path))
 
 tf.keras.models.save_model(
@@ -61,8 +61,16 @@ tf.keras.models.save_model(
     signatures=None,
     options=None
 )
-
 print('\nModel Saved !')
+
 print('Zipping now ...')
 zip(model_zip_name,export_path)
 print('Zipping step has succeeded !')
+
+print('Sending ZIP to S3 bucket')
+bucket_name = "dl-model-bucket-cytech64"
+upload_res = upload_file(full_file_name,bucket_name)
+if upload_res : 
+  print('S3 upload step completed')
+else :
+  print ('Something wrong happened during the S3 upload')
