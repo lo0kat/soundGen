@@ -27,9 +27,10 @@ provider "aws" {
 resource "random_pet" "sg" {}
 
 
+# Create an IAM role for the Web Servers.
 resource "aws_iam_role" "web_iam_role" {
-    name = "web_iam_role"
-    assume_role_policy = <<EOF
+  name = "web_iam_role"
+  assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -47,8 +48,8 @@ EOF
 }
 
 resource "aws_iam_instance_profile" "web_instance_profile" {
-    name = "web_instance_profile"
-    roles = ["web_iam_role"]
+  name = "web_instance_profile"
+  roles = ["web_iam_role"]
 }
 
 resource "aws_iam_role_policy" "web_iam_role_policy" {
@@ -70,7 +71,7 @@ resource "aws_iam_role_policy" "web_iam_role_policy" {
         "s3:GetObject",
         "s3:DeleteObject"
       ],
-      "Resource": ["arn:aws:s3:::dl-model-bucket-cytech64/*"]
+      "Resource": ["arn:aws:s3:::bucket-name/*"]
     }
   ]
 }
