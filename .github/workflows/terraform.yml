@@ -71,7 +71,7 @@ jobs:
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{needs.setup-infra.outputs.output1}} '
             echo "$(whoami)"
-            aws s3 ls
+            aws s3 ls s3://dl-model-bucket-cytech64
             apt-get install -y python3-venv
             git clone https://github.com/lo0kat/soundGen.git
             python3 -V
