@@ -29,7 +29,7 @@ resource "random_pet" "sg" {}
 
 # Create an IAM role for the Web Servers.
 resource "aws_iam_role" "web_iam_role" {
-  name = "web_iam_role"
+  name               = "web_iam_role"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -48,13 +48,13 @@ EOF
 }
 
 resource "aws_iam_instance_profile" "web_instance_profile" {
-  name = "web_instance_profile"
+  name  = "web_instance_profile"
   roles = ["web_iam_role"]
 }
 
 resource "aws_iam_role_policy" "web_iam_role_policy" {
-  name = "web_iam_role_policy"
-  role = "${aws_iam_role.web_iam_role.id}"
+  name   = "web_iam_role_policy"
+  role   = aws_iam_role.web_iam_role.id
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -85,7 +85,7 @@ resource "aws_instance" "training_instance" {
   key_name               = "ML_ICC_key"
   vpc_security_group_ids = [aws_security_group.web-sg.id]
 
-  user_data = <<-EOF
+  user_data            = <<-EOF
               #!/bin/bash
               apt-get update
               apt-get install -y git 
