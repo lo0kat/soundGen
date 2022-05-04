@@ -90,7 +90,7 @@ resource "aws_instance" "training_instance" {
               apt-get update
               apt-get install -y git 
               EOF
-  iam_instance_profile = "${aws_iam_instance_profile.web_instance_profile.id}"
+  iam_instance_profile = aws_iam_instance_profile.web_instance_profile.id
 }
 
 resource "aws_security_group" "web-sg" {
