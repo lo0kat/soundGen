@@ -49,7 +49,7 @@ EOF
 
 resource "aws_iam_instance_profile" "web_instance_profile" {
   name  = "web_instance_profile"
-  roles = ["web_iam_role"]
+  role  = "web_iam_role"
 }
 
 resource "aws_iam_role_policy" "web_iam_role_policy" {
