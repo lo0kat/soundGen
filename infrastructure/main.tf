@@ -26,42 +26,78 @@ provider "aws" {
 
 resource "random_pet" "sg" {}
 
-data "aws_ami" "ubuntu" {
-  most_recent = true
 
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["099720109477"] # Canonical
+# Create an IAM role for the Web Servers.
+resource "aws_iam_role" "web_iam_role" {
+  name               = "web_iam_role"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
 }
 
-resource "aws_instance" "web" {
-  ami                    = data.aws_ami.ubuntu.id
-  instance_type          = "t2.micro"
+resource "aws_iam_instance_profile" "web_instance_profile" {
+  name = "web_instance_profile"
+  role = "web_iam_role"
+}
+
+resource "aws_iam_role_policy" "web_iam_role_policy" {
+  name   = "web_iam_role_policy"
+  role   = aws_iam_role.web_iam_role.id
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": ["s3:ListBucket"],
+      "Resource": ["arn:aws:s3:::dl-model-bucket-cytech64"]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:DeleteObject"
+      ],
+      "Resource": ["arn:aws:s3:::dl-model-bucket-cytech64/*"]
+    }
+  ]
+}
+EOF
+}
+
+
+resource "aws_instance" "training_instance" {
+  ami                    = "ami-015ba8cf6eb94ee23"
+  instance_type          = "t2.medium"
+  key_name               = "ML_ICC_key"
   vpc_security_group_ids = [aws_security_group.web-sg.id]
 
-  user_data = <<-EOF
+  user_data            = <<-EOF
               #!/bin/bash
               apt-get update
-              apt-get install -y apache2
-              sed -i -e 's/80/8080/' /etc/apache2/ports.conf
-              echo "Hello World" > /var/www/html/index.html
-              systemctl restart apache2
+              apt-get install -y git 
               EOF
+  iam_instance_profile = aws_iam_instance_profile.web_instance_profile.id
 }
 
 resource "aws_security_group" "web-sg" {
   name = "${random_pet.sg.id}-sg"
   ingress {
-    from_port   = 8080
-    to_port     = 8080
+    from_port   = 22
+    to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -74,6 +110,10 @@ resource "aws_security_group" "web-sg" {
   }
 }
 
-output "web-address" {
-  value = "${aws_instance.web.public_dns}:8080"
+resource "aws_s3_bucket" "model_bucket" {
+  bucket = "dl-model-bucket-cytech64"
+}
+
+output "gpu-instance-address" {
+  value = aws_instance.training_instance.public_dns
 }
