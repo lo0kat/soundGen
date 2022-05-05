@@ -3,16 +3,18 @@ name: "Terraform"
 on:
   push:
     branches:
-      - main
-  pull_request:
+      - train
 
-jobs:
-  terraform:
-    name: "Terraform"
-    runs-on: ubuntu-20.04
-    defaults:
+defaults:
       run:
         working-directory: ./infrastructure
+    
+jobs:
+  setup-infra:
+    runs-on: ubuntu-20.04
+    outputs:
+      output1: ${{ steps.tf_output.outputs.address }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -20,6 +22,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
+          terraform_wrapper: false
           # terraform_version: 0.13.0:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
@@ -37,37 +40,58 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        if: github.event_name == 'pull_request'
         run: terraform plan -no-color -input=false
-        continue-on-error: true
-
-      - uses: actions/github-script@v6
-        if: github.event_name == 'pull_request'
-        env:
-          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
-            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-            <details><summary>Show Plan</summary>
-            \`\`\`\n
-            ${process.env.PLAN}
-            \`\`\`
-            </details>
-            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            })
-      - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
-        run: exit 1
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
+      
+      - name : Terraform Output
+        id: tf_output
+        run : |
+         export GPUADDRESS=$(terraform output gpu-instance-address)
+         echo "::set-output name=address::$GPUADDRESS"
+
+
+  modelcomputation:
+    needs : setup-infra
+    runs-on: ubuntu-20.04
+   
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Wait 30s for Resource init 
+        run: sleep 30
+      
+      - name : SSH Connection
+        env:
+            PRIVATE_KEY: ${{ secrets.AWS_EC2_PRIVATE_KEY  }}
+        
+        run : |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{needs.setup-infra.outputs.output1}} '
+            echo "$(whoami)"
+            aws s3 ls s3://dl-model-bucket-cytech64
+            apt-get install -y python3-venv
+            git clone https://github.com/lo0kat/soundGen.git
+            python3 -V
+            cd soundGen/backend/model
+            git checkout train
+            python3 -m venv MYENV
+            pip install -r requirements.txt
+            cd train_app
+            python3 main.py
+            ls
+          '
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          # terraform_version: 0.13.0:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+      
+      - name: Terraform Init
+        id: init
+        run: terraform init
+      
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve -target aws_instance.training_instance -target aws_security_group.sg -target random_pet.sg
