@@ -35,7 +35,7 @@ override.tf.json
 terraform.rc
 
 
-__pycache__
+
 *.zip
 
 #frontend
@@ -43,4 +43,4 @@ frontend/flagged/
 frontend/records/
 
 #backend
-backend_preprocess/records
+backend/preprocess/records

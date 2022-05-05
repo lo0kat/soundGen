@@ -1,2 +1,5 @@
-tensorflow == 2.3.1
-boto3
+model-creator-bird-sing
+numpy
+os
+pandas
+mutagen
