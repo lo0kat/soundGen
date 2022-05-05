@@ -1,24 +1,14 @@
-<<<<<<< HEAD:backend_preprocess/preprocess.py
-from preprocess_class import Preprocess_Aplicatif
-=======
 from pydub import AudioSegment
 from pydub.silence import split_on_silence
 import ast
 import soundfile as sf
 import numpy as np
->>>>>>> main:backend/preprocess/preprocess.py
 
-def preprocess_file(user_data: dict) -> dict:
+def find_chunks(input_user: tuple):
     """
-    Permet de renvoyer un json avec les différents segments audios décomposés
+    Permet de trouver les différents chunks où les oiseaux chantes
     """
 
-<<<<<<< HEAD:backend_preprocess/preprocess.py
-    json_output_preprocess = {}
-    for key in user_data:
-        preprocess_applicatif = Preprocess_Aplicatif(user_data[key])
-        json_output_preprocess[key] = preprocess_applicatif.find_spectrogram()
-=======
     sr_original = int(input_user[0])
     song = np.array(ast.literal_eval(input_user[1]), dtype='int32')
     sf.write('records/record.wav', song, sr_original)
@@ -82,5 +72,4 @@ def preprocess_file(user_data: dict) -> dict:
     for key in user_data:
         chunks = find_chunks(user_data[key])
         json_output_preprocess[key] = reconstruct_chunks(chunks)
->>>>>>> main:backend/preprocess/preprocess.py
     return json_output_preprocess

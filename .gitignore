@@ -43,8 +43,4 @@ frontend/flagged/
 frontend/records/
 
 #backend
-<<<<<<< HEAD
-backend_preprocess/records
-=======
 backend/preprocess/records
->>>>>>> main

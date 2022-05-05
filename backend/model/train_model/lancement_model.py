@@ -103,7 +103,6 @@ def creation_spectrogram(espece : str) -> None:
 
 if __name__ == "__main__":
 
-
     data_getter = Data_Recup("~/kaggle.json")
     data_getter.get_songs()
 
@@ -121,9 +120,4 @@ if __name__ == "__main__":
     bird_singer.fit_classique(x_train)
     bird_singer.autoencoder.save("model")
     '''
-    
-    param_tuner = ParameterTuning(config.tuning_dico, taille_input)
-    param_tuner.logwandb("W&B.txt")
-    param_tuner.tune(x_train)
-
-  
+    ParameterTuning(taille_input).tune(x_train)
