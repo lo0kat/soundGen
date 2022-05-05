@@ -4,6 +4,7 @@ import preprocess
 
 app = FastAPI()
 
+#Main road to know the main road of the API
 @app.get("/")
 def read_root():
     return {"message": "Welcome from the API"}

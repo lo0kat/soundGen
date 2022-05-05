@@ -1,7 +1,6 @@
 from pydub import AudioSegment
 from pydub.silence import split_on_silence
 import ast
-import librosa
 import soundfile as sf
 import numpy as np
 
@@ -31,7 +30,7 @@ def find_chunks(input_user: tuple):
     
     return chunks
 
-def reconstruct_chunks(chunks,padding = 300):
+def reconstruct_chunks(chunks, padding = 300):
     """
     Permet de reconstruire les différents chunks 
     """
@@ -43,7 +42,7 @@ def reconstruct_chunks(chunks,padding = 300):
         return aChunk.apply_gain(change_in_dBFS)
 
     # Process each chunk with your parameters
-    json_output_preprocess = {}
+    dico_res = {}
     for i, chunk in enumerate(chunks):
         # Create a silence chunk that's 0.5 seconds (or 1000 ms) long for padding.
         silence_chunk = AudioSegment.silent(duration=padding)
@@ -54,14 +53,23 @@ def reconstruct_chunks(chunks,padding = 300):
         # Normalize the entire chunk.
         normalized_chunk = match_target_amplitude(audio_chunk, -20.0)
         # Export the audio chunk with new bitrate.
+        dico_res[str(i)] = str(list(normalized_chunk.get_array_of_samples()))
+        '''
         normalized_chunk.export(
             "records/{0}.wav".format(i),
             bitrate = "192k",
             format = "wav"
         )
+        '''
+    return dico_res
 
-def preprocess_file(user_data):
+def preprocess_file(user_data: dict) -> dict:
+    """
+    Permet de renvoyer un json avec les différents segments audios décomposés
+    """
+
+    json_output_preprocess = {}
     for key in user_data:
         chunks = find_chunks(user_data[key])
-        reconstruct_chunks(chunks)
-        
+        json_output_preprocess[key] = reconstruct_chunks(chunks)
+    return json_output_preprocess

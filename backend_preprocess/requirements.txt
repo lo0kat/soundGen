@@ -1,5 +1,3 @@
-model-creator-bird-sing
-librosa
-fastapi
-numpy
-"uvicorn[standard]"
+model_creator_bird_sing
+fastapi==0.75.1
+uvicorn==0.16.0
