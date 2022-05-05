@@ -4,7 +4,7 @@ import ast
 import soundfile as sf
 import os
 import numpy as np
-from model_creator.preprocess import Loader, Padder, LogSpectrogramExtractor, MinMaxNormaliser,PreprocessingPipeline
+from model_creator.preprocess import Loader, Padder, LogSpectrogramExtractor, MinMaxNormaliser, PreprocessingPipeline
 import model_creator.config_default as conf
 
 class Preprocess_Aplicatif:
@@ -74,7 +74,7 @@ class Preprocess_Aplicatif:
         preprocessing_pipeline.extractor = log_spectrogram_extractor
         preprocessing_pipeline.normaliser = min_max_normaliser
 
-        spectrograms = np.array(preprocessing_pipeline.process(self.tmp_dir))
+        spectrograms = np.array(preprocessing_pipeline.process_applicatif(self.tmp_dir))
         self.nettoyage()
 
         return spectrograms

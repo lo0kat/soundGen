@@ -8,14 +8,13 @@ def reconvertion_request_res(res):
     """
     Change the request text into number dictionnary
     """
-
-    first_trad = ast.literal_eval(res.text)
-    second_trad = {}
-    for i in first_trad:
-        for j in first_trad[i]:
-            second_trad[i] = {int(j):ast.literal_eval(first_trad[i][j])}
     
-    return second_trad
+    first_trad = ast.literal_eval(res.text)
+    for name in first_trad:
+        first_trad[name] = np.array(first_trad[name])
+        print(first_trad[name].shape)
+
+    return first_trad
 
 
 def greet(text1:str, audio1:tuple, text2:str, audio2:tuple) -> tuple:
@@ -36,13 +35,8 @@ def greet(text1:str, audio1:tuple, text2:str, audio2:tuple) -> tuple:
     res = requests.post("http://127.0.0.1:8000/preprocess", json=json_original)
     #Convert the response into numbers
     res_converted = reconvertion_request_res(res)
-    nb = list(res_converted[text1].keys())[0]
-    song = np.array(res_converted[text1][nb], dtype='int16')
-    sr = 48000
 
-    #Send samples to the model
-
-    return (sr,song)
+    return "Hello World"
 
 
 #Permet l'enregistrement du son et sa modification de façon interactive
@@ -52,7 +46,7 @@ text2 = gr.inputs.Textbox(type="str", label="Player 2 Name")
 audio2 = gr.inputs.Audio(source="microphone", label='Enregistrement 2', optional=False)
 iface = gr.Interface(fn=greet,
                     inputs=[text1, audio1, text2, audio2], 
-                    outputs="audio",
+                    outputs="text",
                     title="Who is the fake bird",
                     description="This is made to see who will imitate the best the birds of hese choice.",)
 
