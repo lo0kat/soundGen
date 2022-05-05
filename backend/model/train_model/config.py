@@ -1,6 +1,8 @@
 LIEN_METADATA = "metadata.csv"
 LIEN_DIR_MP3 = "mp3/"
+
 NB_ESPECE = None
+
 
 #Parametre pour la découpe
 
@@ -11,6 +13,7 @@ SILENCE_BAR = -32
 #Too short lenght for sing
 TOO_SHORT_LENGHT = 1.1
 #Too long sing
+
 TOO_LONG_LENGHT = 5
 
 tuning_dico = {
@@ -40,3 +43,4 @@ tuning_dico = {
         "conv_strides":(2,2,2,2, (2,1)),
     },
 }
+
