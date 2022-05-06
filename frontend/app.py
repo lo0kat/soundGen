@@ -1,6 +1,7 @@
 import gradio as gr
 import requests
 import ast
+import pandas as pd
 
 
 def reconvertion_request_res(res):
@@ -33,10 +34,7 @@ def greet(text1:str, audio1:tuple, text2:str, audio2:tuple) -> tuple:
     #Send for prediction
     res_pred = requests.post("http://0.0.0.0:8082/forecast_encoder", json=reconvertion_request_res(res_preprocess))
 
-    #Convert the response into numbers
-    #res_converted = reconvertion_request_res(res_pred)
-
-    return "Hello World"
+    return pd.DataFrame(ast.literal_eval(res_pred.text), index = [1])
 
 
 #Permet l'enregistrement du son et sa modification de façon interactive
@@ -46,7 +44,7 @@ text2 = gr.inputs.Textbox(type="str", label="Player 2 Name")
 audio2 = gr.inputs.Audio(source="microphone", label='Enregistrement 2', optional=False)
 iface = gr.Interface(fn=greet,
                     inputs=[text1, audio1, text2, audio2], 
-                    outputs="text",
+                    outputs="dataframe",
                     title="Who is the fake bird",
                     description="This is made to see who will imitate the best the birds of hese choice.",)
 
