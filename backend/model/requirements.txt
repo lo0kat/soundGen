@@ -1,5 +1,6 @@
-model-creator-bird-sing
-numpy
-os
+model_creator_bird_sing_v2
+numpy == 1.18.5
 pandas
 mutagen
+tqdm
+kaggle == 1.5.12

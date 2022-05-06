@@ -48,7 +48,7 @@ jobs:
       - name : Terraform Output
         id: tf_output
         run : |
-         export GPUADDRESS=$(terraform output gpu-instance-address)
+         export GPUADDRESS=$(terraform output -raw gpu-instance-address)
          echo "::set-output name=address::$GPUADDRESS"
 
 
@@ -66,21 +66,27 @@ jobs:
       - name : SSH Connection
         env:
             PRIVATE_KEY: ${{ secrets.AWS_EC2_PRIVATE_KEY  }}
+            WANDB_TOKEN: ${{ secrets.WANDB_API_TOKEN  }}
+            KAGGLE_CREDS: ${{ secrets.KAGGLE_API_CREDS  }}
         
         run : |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          echo "$WANDB_TOKEN" > W&B.txt
+          echo "$KAGGLE_CREDS" > kaggle.json
+          scp -o StrictHostKeyChecking=no -i private_key W&B.txt kaggle.json ubuntu@${{needs.setup-infra.outputs.output1}}:~/ 
           ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{needs.setup-infra.outputs.output1}} '
             echo "$(whoami)"
+            ls
             aws s3 ls s3://dl-model-bucket-cytech64
-            apt-get install -y python3-venv
+            sudo apt-get install -y ffmpeg
             git clone https://github.com/lo0kat/soundGen.git
             python3 -V
             cd soundGen/backend/model
             git checkout train
-            python3 -m venv MYENV
             pip install -r requirements.txt
             cd train_app
-            python3 main.py
+            mv ~/kaggle.json ~/W&B.txt .
+            python3 lancement_model
             ls
           '
       - name: Setup Terraform

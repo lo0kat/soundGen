@@ -1,7 +1,7 @@
 LIEN_METADATA = "metadata.csv"
 LIEN_DIR_MP3 = "mp3/"
 
-NB_ESPECE = None
+NB_ESPECE = 1
 
 
 #Parametre pour la découpe
