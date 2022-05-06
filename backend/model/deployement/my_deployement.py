@@ -1,27 +1,34 @@
-import ray
-from ray import serve
+from encoder import Model
+import uvicorn
 from fastapi import FastAPI
-from model_creator.auto_encoder import Autoencoder
+import numpy as np
 
+model = Model("model_trained")
 app = FastAPI()
 
-@serve.deployment
-@serve.ingress(app)
-class Counter:
-  def __init__(self):
-    self.auto_encoder = Autoencoder.load("model_trained")
-    self.encoder = self.auto_encoder.encoder
-    self.decoder = self.auto_encoder.decoder
+def mise_for_prediction(input_user: list):
+  input_user = np.array(input_user)
+  input_user = np.expand_dims(input_user, 3)
 
-  @app.get("/")
-  def get(self):
-    return {"Hello World from model !!"}
+  return input_user
 
-  @app.get("/encoder_pred")
-  def encod_forecast(self, request):
-    return {"forecast": self.encoder.predict(request)}
+#Main road to know the main road of the API
+@app.get("/")
+def read_root():
+  return {"message": "Welcome from the API model"}
+
+@app.post("/forecast_encoder")
+def get_pred_encoder(input_user : dict) -> dict:
+
+  res_dico = {}
+  for joueur in input_user:
+    res_dico[joueur] = str(model.encoder_predict(mise_for_prediction(input_user[joueur])))
+  
+  return res_dico
+
+@app.post("/forecast_decoder")
+def get_pred_decoder(input_user : dict) -> dict:
+  return model.decoder_predict(input_user)
 
 if __name__ == "__main__":
-    ray.init()
-    serve.start(detached=True)
-    Counter.deploy()
+  uvicorn.run("my_deployement:app", host="0.0.0.0", port=8082, reload = True)

@@ -1,7 +1,6 @@
 import gradio as gr
 import requests
 import ast
-import numpy as np
 
 
 def reconvertion_request_res(res):
@@ -10,9 +9,6 @@ def reconvertion_request_res(res):
     """
     
     first_trad = ast.literal_eval(res.text)
-    for name in first_trad:
-        first_trad[name] = np.array(first_trad[name])
-        print(first_trad[name].shape)
 
     return first_trad
 
@@ -32,9 +28,13 @@ def greet(text1:str, audio1:tuple, text2:str, audio2:tuple) -> tuple:
         }
 
     #Send request to the FastAPI for preprocessing
-    res = requests.post("http://127.0.0.1:8000/preprocess", json=json_original)
+    res_preprocess = requests.post("http://0.0.0.0:8080/preprocess", json=json_original)
+
+    #Send for prediction
+    res_pred = requests.post("http://0.0.0.0:8082/forecast_encoder", json=reconvertion_request_res(res_preprocess))
+
     #Convert the response into numbers
-    res_converted = reconvertion_request_res(res)
+    #res_converted = reconvertion_request_res(res_pred)
 
     return "Hello World"
 
