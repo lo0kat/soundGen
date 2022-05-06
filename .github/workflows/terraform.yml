@@ -48,7 +48,7 @@ jobs:
       - name : Terraform Output
         id: tf_output
         run : |
-         export GPUADDRESS=$(terraform output -raw gpu-instance-address)
+         export GPUADDRESS=$(terraform output -raw gpu-instance-address) 
          echo "::set-output name=address::$GPUADDRESS"
 
 
