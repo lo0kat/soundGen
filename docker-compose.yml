@@ -1,5 +1,0 @@
-services:
-  training-app:
-    build: ./backend/model/
-    volumes:
-      - "./backend/model/train_app/:/code"

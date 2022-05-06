@@ -1,4 +1,6 @@
+from ast import arg
 import numpy as np
+import argparse
 import os
 from tqdm import tqdm
 import pandas as pd
@@ -103,24 +105,36 @@ def creation_spectrogram(espece : str) -> None:
 
 if __name__ == "__main__":
 
-    #data_getter = Data_Recup("~/kaggle.json")
-    #data_getter.get_songs()
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-d", "--data", help="Will get data", required=False)
+    parser.add_argument("-p", "--preprocess", help="Will do only the preprocessing part", required=False)
+    parser.add_argument("-t", "--tuning", help="Will start the tuning part", required=False)
+    parser.add_argument("-T", "--total", help="Will run all the work", required=False)
+    args = parser.parse_args()
+
+    if args.data or args.total:
+        data_getter = Data_Recup("~/kaggle.json")
+        data_getter.get_songs()
 
     meta_df = pd.read_csv(config.LIEN_METADATA)
     espece = chargement_espece(meta_df, config.NB_ESPECE)
-    #decoupe_son(espece, meta_df)
-    #num_supp = sup_enregistrement_court(espece)
-    #creation_spectrogram(espece)
-    spec = os.listdir("./preprocessed_data/"+ espece[0] +"/spectrograms")
-    taille_input = np.load("./preprocessed_data/"+ espece[0] +"/spectrograms/" + spec[0]).shape
+
+    if args.preprocess or args.total:
+        decoupe_son(espece, meta_df)
+        num_supp = sup_enregistrement_court(espece)
+        creation_spectrogram(espece)
+        spec = os.listdir("./preprocessed_data/"+ espece[0] +"/spectrograms")
+        taille_input = np.load("./preprocessed_data/"+ espece[0] +"/spectrograms/" + spec[0]).shape
 
     x_train = CreateData(espece).load_music()
-    '''
-    bird_singer = ClassiqueTrain(taille_input)
-    bird_singer.fit_classique(x_train)
-    bird_singer.autoencoder.save("model")
-    '''
+
+    if args.tuning or args.total:
+        param_tuner = ParameterTuning(config.tuning_dico, taille_input)
+        param_tuner.logwandb("W&B.txt")
+        param_tuner.tune(x_train)
     
-    param_tuner = ParameterTuning(config.tuning_dico, taille_input)
-    param_tuner.logwandb("W&B.txt")
-    param_tuner.tune(x_train)
+    else:
+        bird_singer = ClassiqueTrain(taille_input)
+        bird_singer.fit_classique(x_train)
+        bird_singer.autoencoder.save("model")

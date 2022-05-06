@@ -1,0 +1,3 @@
+model-creator-bird-sing-v2
+fastapi
+uvicorn[standard]
