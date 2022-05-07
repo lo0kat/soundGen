@@ -105,8 +105,8 @@ def creation_spectrogram(espece : str) -> None:
 if __name__ == "__main__":
 
 
-    #data_getter = Data_Recup("kaggle.json")
-    #data_getter.get_songs()
+    data_getter = Data_Recup("kaggle.json")
+    data_getter.get_songs()
 
     meta_df = pd.read_csv(config.LIEN_METADATA)
     espece = chargement_espece(meta_df, config.NB_ESPECE)
