@@ -79,6 +79,7 @@ jobs:
             ls
             aws s3 ls s3://dl-model-bucket-cytech64
             sudo apt-get install -y ffmpeg
+            export PATH="$HOME/.local/bin:$PATH"
             git clone https://github.com/lo0kat/soundGen.git
             python3 -V
             cd soundGen/backend/model
