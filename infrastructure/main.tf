@@ -80,7 +80,7 @@ EOF
 
 
 resource "aws_instance" "training_instance" {
-  ami                    = "ami-0cd454db24da5cb9b"
+  ami                    = "ami-015ba8cf6eb94ee23"
   instance_type          = "g4dn.xlarge"
   key_name               = "ML_ICC_key"
   vpc_security_group_ids = [aws_security_group.web-sg.id]
