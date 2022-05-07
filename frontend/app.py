@@ -3,17 +3,6 @@ import requests
 import ast
 import pandas as pd
 
-
-def reconvertion_request_res(res):
-    """
-    Change the request text into number dictionnary
-    """
-    
-    first_trad = ast.literal_eval(res.text)
-
-    return first_trad
-
-
 def greet(text1:str, audio1:tuple, text2:str, audio2:tuple) -> tuple:
     """
     Allow you to do :
@@ -32,16 +21,27 @@ def greet(text1:str, audio1:tuple, text2:str, audio2:tuple) -> tuple:
     res_preprocess = requests.post("http://0.0.0.0:8080/preprocess", json=json_original)
 
     #Send for prediction
-    res_pred = requests.post("http://0.0.0.0:8082/forecast_encoder", json=reconvertion_request_res(res_preprocess))
+    res_pred = requests.post("http://0.0.0.0:8082/forecast_encoder", json=ast.literal_eval(res_preprocess.text))
 
     return pd.DataFrame(ast.literal_eval(res_pred.text), index = [1])
 
 
 #Permet l'enregistrement du son et sa modification de façon interactive
-text1 = gr.inputs.Textbox(type="str", label="Player 1 Name")
-audio1 = gr.inputs.Audio(source="microphone", label='Enregistrement 1', optional=False)
-text2 = gr.inputs.Textbox(type="str", label="Player 2 Name")
-audio2 = gr.inputs.Audio(source="microphone", label='Enregistrement 2', optional=False)
+text1 = gr.inputs.Textbox(type="str", 
+                        label="Player 1 Name")
+
+audio1 = gr.inputs.Audio(source="microphone", 
+                        label='Enregistrement 1', 
+                        optional=False)
+
+text2 = gr.inputs.Textbox(type="str", 
+                        label="Player 2 Name")
+
+
+audio2 = gr.inputs.Audio(source="microphone", 
+                        label='Enregistrement 2', 
+                        optional=False)
+
 iface = gr.Interface(fn=greet,
                     inputs=[text1, audio1, text2, audio2], 
                     outputs="dataframe",
