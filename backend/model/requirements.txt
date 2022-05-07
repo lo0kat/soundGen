@@ -4,3 +4,4 @@ pandas
 mutagen
 tqdm
 kaggle == 1.5.12
+boto3

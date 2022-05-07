@@ -9,6 +9,7 @@ from model_creator.preprocess import Loader, Padder, LogSpectrogramExtractor, Mi
 from model_creator.train import ClassiqueTrain, CreateData, ParameterTuning
 from model_creator import config_default
 from model_creator.preprocess import Data_Recup
+from utils.save import zip_and_upload
 
 def chargement_espece(metadata : pd.DataFrame, nb_espece = None) -> list:
     """
@@ -104,8 +105,8 @@ def creation_spectrogram(espece : str) -> None:
 if __name__ == "__main__":
 
 
-    data_getter = Data_Recup("kaggle.json")
-    data_getter.get_songs()
+    #data_getter = Data_Recup("kaggle.json")
+    #data_getter.get_songs()
 
     meta_df = pd.read_csv(config.LIEN_METADATA)
     espece = chargement_espece(meta_df, config.NB_ESPECE)
@@ -117,13 +118,15 @@ if __name__ == "__main__":
     taille_input = np.load("./preprocessed_data/"+ espece[0] +"/spectrograms/" + spec[0]).shape
 
     x_train = CreateData(espece).load_music()
-    '''
+    
     bird_singer = ClassiqueTrain(taille_input)
     bird_singer.fit_classique(x_train)
     bird_singer.autoencoder.save("model")
-    '''
+    zip_and_upload("model_trained") # zip trained model dir and upload it to an S3 bucket
+
     
-    param_tuner = ParameterTuning(config.tuning_dico, taille_input)
-    param_tuner.logwandb("W&B.txt")
-    param_tuner.tune(x_train)
+    
+    #param_tuner = ParameterTuning(config.tuning_dico, taille_input)
+    #param_tuner.logwandb("W&B.txt")
+    #param_tuner.tune(x_train)
 

@@ -84,9 +84,9 @@ jobs:
             cd soundGen/backend/model
             git checkout train
             pip install -r requirements.txt
-            cd train_app
+            cd train_model
             mv ~/kaggle.json ~/"W&B.txt" .
-            python3 lancement_model
+            python3 lancement_model.py
             ls
           '
       - name: Setup Terraform
