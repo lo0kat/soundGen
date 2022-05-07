@@ -22,9 +22,11 @@ def read_root():
 @app.post("/forecast_encoder")
 def get_pred_encoder(input_user : dict) -> dict:
 
+  oiseau = input_user['Oiseau']
   res_dico = {}
   for joueur in input_user:
-    res_dico[joueur] = str(model.encoder_predict(mise_for_prediction(input_user[joueur]), "Fringilla_coelebs"))
+    if joueur!="Oiseau":
+      res_dico[joueur] = str(model.encoder_predict(mise_for_prediction(input_user[joueur]), oiseau))
   
   return res_dico
 

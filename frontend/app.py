@@ -2,8 +2,9 @@ import gradio as gr
 import requests
 import ast
 import pandas as pd
+from correspondence_oiseau import DICO_CORR
 
-def greet(text1:str, audio1:tuple, text2:str, audio2:tuple) -> tuple:
+def greet(oiseau:str, text1:str, audio1:tuple, text2:str, audio2:tuple) -> tuple:
     """
     Allow you to do :
         1) The preprocessing
@@ -20,8 +21,12 @@ def greet(text1:str, audio1:tuple, text2:str, audio2:tuple) -> tuple:
     #Send request to the FastAPI for preprocessing
     res_preprocess = requests.post("http://0.0.0.0:8080/preprocess", json=json_original)
 
+    #Ajout du type d'oiseau pour la prédiction
+    res_preprocess_tranform = ast.literal_eval(res_preprocess.text)
+    res_preprocess_tranform["Oiseau"] = DICO_CORR[oiseau]
+
     #Send for prediction
-    res_pred = requests.post("http://0.0.0.0:8082/forecast_encoder", json=ast.literal_eval(res_preprocess.text))
+    res_pred = requests.post("http://0.0.0.0:8082/forecast_encoder", json=res_preprocess_tranform)
 
     return pd.DataFrame(ast.literal_eval(res_pred.text), index = [1])
 
@@ -31,7 +36,7 @@ text1 = gr.inputs.Textbox(type="str",
                         label="Player 1 Name")
 
 audio1 = gr.inputs.Audio(source="microphone", 
-                        label='Enregistrement 1', 
+                        label='First recording', 
                         optional=False)
 
 text2 = gr.inputs.Textbox(type="str", 
@@ -39,14 +44,19 @@ text2 = gr.inputs.Textbox(type="str",
 
 
 audio2 = gr.inputs.Audio(source="microphone", 
-                        label='Enregistrement 2', 
+                        label='Second recording', 
                         optional=False)
 
+choix_oiseau = gr.inputs.Radio(["Pinson des arbres", "Canard", "Autruche", "Coucou"],
+                                label='Wich bird bird would you like to imitate ?')
+
 iface = gr.Interface(fn=greet,
-                    inputs=[text1, audio1, text2, audio2], 
+                    inputs=[choix_oiseau, text1, audio1, text2, audio2], 
                     outputs="dataframe",
                     title="Who is the fake bird",
-                    description="This is made to see who will imitate the best the birds of hese choice.",)
+                    description="This is made to see who will imitate the best the birds of hese choice.",
+                    theme="peach",
+                    )
 
 
 if __name__ == "__main__":
