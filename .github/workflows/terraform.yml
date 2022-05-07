@@ -83,7 +83,7 @@ jobs:
             python3 -V
             cd soundGen/backend/model
             git checkout train
-            pip install -r requirements.txt
+            pip3 install -r requirements.txt
             cd train_model
             mv ~/kaggle.json ~/"W&B.txt" .
             python3 lancement_model.py
