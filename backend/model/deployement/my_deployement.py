@@ -1,11 +1,13 @@
-from encoder import Model
+from encoder import Encoder
+from generation_sound import Generation_Oiseau
 import uvicorn
 from fastapi import FastAPI
 import numpy as np
 import tensorflow.compat.v1 as tf
 
 
-model = Model("model_trained")
+model = Encoder("model_trained")
+gene = Generation_Oiseau("model_trained")
 app = FastAPI()
 
 def mise_for_prediction(input_user: list):
@@ -32,7 +34,8 @@ def get_pred_encoder(input_user : dict) -> dict:
 
 @app.post("/forecast_decoder")
 def get_pred_decoder(input_user : dict) -> dict:
-  return model.decoder_predict(input_user)
+  oiseau = input_user['Oiseau']
+  return gene.gen_sound(oiseau)
 
 if __name__ == "__main__":
   uvicorn.run("my_deployement:app", host="0.0.0.0", port=8082, reload = True)

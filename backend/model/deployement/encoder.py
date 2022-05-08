@@ -2,9 +2,8 @@ from model_creator.auto_encoder import Autoencoder
 import numpy as np
 from tensorflow.python.keras.backend import set_session
 import tensorflow.compat.v1 as tf
-import tensorflow
 
-class Model:
+class Encoder:
   """
   This will allow you to upload the model and work with it
   """

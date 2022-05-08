@@ -2,6 +2,7 @@ import gradio as gr
 import requests
 import ast
 import pandas as pd
+import numpy as np
 from correspondence_oiseau import DICO_CORR
 
 def greet(oiseau:str, text1:str, audio1:tuple, text2:str, audio2:tuple) -> tuple:
@@ -28,7 +29,13 @@ def greet(oiseau:str, text1:str, audio1:tuple, text2:str, audio2:tuple) -> tuple
     #Send for prediction
     res_pred = requests.post("http://0.0.0.0:8082/forecast_encoder", json=res_preprocess_tranform)
 
-    return pd.DataFrame(ast.literal_eval(res_pred.text), index = [1])
+    #Generate sound
+    gen_res = []
+    for i in range(2):
+        res_gene = requests.post("http://0.0.0.0:8082/forecast_decoder", json={"Oiseau":DICO_CORR[oiseau]})
+        gen_res.append(np.array(ast.literal_eval(ast.literal_eval(res_gene.text)[DICO_CORR[oiseau]]), dtype='int16'))
+
+    return pd.DataFrame(ast.literal_eval(res_pred.text), index = [1]), (22050, gen_res[0]), (22050, gen_res[1])
 
 
 #Permet l'enregistrement du son et sa modification de façon interactive
@@ -52,7 +59,7 @@ choix_oiseau = gr.inputs.Radio(["Pinson des arbres", "Canard", "Autruche", "Couc
 
 iface = gr.Interface(fn=greet,
                     inputs=[choix_oiseau, text1, audio1, text2, audio2], 
-                    outputs="dataframe",
+                    outputs=["dataframe", "audio", "audio"],
                     title="Who is the fake bird",
                     description="This is made to see who will imitate the best the birds of hese choice.",
                     theme="peach",
