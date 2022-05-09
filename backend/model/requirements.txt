@@ -1,5 +1,1 @@
-model-creator-bird-sing
-numpy
-os
-pandas
-mutagen
+model-creator-bird-sing-v2
