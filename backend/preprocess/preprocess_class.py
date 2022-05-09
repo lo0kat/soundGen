@@ -6,7 +6,9 @@ import os
 import numpy as np
 from model_creator.preprocess import Loader, Padder, LogSpectrogramExtractor, MinMaxNormaliser, PreprocessingPipeline
 import model_creator.config_default as conf
+
 import librosa
+
 
 class Preprocess_Aplicatif:
 
@@ -41,6 +43,7 @@ class Preprocess_Aplicatif:
         song = np.array(ast.literal_eval(self.input_user[1]), dtype='float32')
         song = librosa.resample(song, orig_sr=48000, target_sr=22050)
         
+
         sf.write(self.tmp_dir + 'record.wav', song, sr_original)
 
         # Load your audio.
