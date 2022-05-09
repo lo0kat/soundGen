@@ -106,6 +106,7 @@ def creation_spectrogram(espece : str) -> None:
 
 if __name__ == "__main__":
 
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-d", "--data", help="Will get data", required=False)
     parser.add_argument("-p", "--preprocess", help="Will do only the preprocessing part", required=False)
@@ -126,6 +127,7 @@ if __name__ == "__main__":
         num_supp = sup_enregistrement_court(espece)
         creation_spectrogram(espece)
     
+
     spec = os.listdir("./preprocessed_data/"+ espece[0] +"/spectrograms")
     taille_input = np.load("./preprocessed_data/"+ espece[0] +"/spectrograms/" + spec[0]).shape
     x_train = CreateData(espece).load_music()

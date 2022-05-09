@@ -5,7 +5,9 @@ import pandas as pd
 import numpy as np
 from correspondence_oiseau import DICO_CORR
 
+
 def greet(oiseau:str, text1:str, audio1:tuple, text2:str, audio2:tuple) -> tuple:
+
     """
     Allow you to do :
         1) The preprocessing
@@ -20,6 +22,7 @@ def greet(oiseau:str, text1:str, audio1:tuple, text2:str, audio2:tuple) -> tuple
         }
 
     #Send request to the FastAPI for preprocessing
+
     res_preprocess = requests.post("http://0.0.0.0:8080/preprocess", json=json_original)
 
     #Ajout du type d'oiseau pour la prédiction
@@ -36,6 +39,7 @@ def greet(oiseau:str, text1:str, audio1:tuple, text2:str, audio2:tuple) -> tuple
         gen_res.append(np.array(ast.literal_eval(ast.literal_eval(res_gene.text)[DICO_CORR[oiseau]]), dtype='int16'))
 
     return pd.DataFrame(ast.literal_eval(res_pred.text), index = [1]), (22050, gen_res[0]), (22050, gen_res[1])
+
 
 
 #Permet l'enregistrement du son et sa modification de façon interactive
@@ -57,8 +61,10 @@ choix_oiseau = gr.inputs.Radio(["Pinson des arbres", "Canard", "Autruche", "Couc
                                 label='Wich bird bird would you like to imitate ?')
 
 iface = gr.Interface(fn=greet,
+
                     inputs=[choix_oiseau, text1, audio1, text2, audio2], 
                     outputs=["dataframe", "audio", "audio"],
+
                     title="Who is the fake bird",
                     description='''This is our final project of my engineering school. It has been made in one month with an other student
                                 who works in cloud computing. The idea was to generate birds songs with an Artificial Intelligence. We 

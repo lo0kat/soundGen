@@ -44,3 +44,19 @@ frontend/records/
 
 #backend
 backend/preprocess/records
+
+#venv
+MYENV
+W&B.txt
+kaggle.json
+
+*.mp3
+mp3
+*.csv
+
+*.wav
+preprocessed_data
+
+wandb
+my_dir
+model
