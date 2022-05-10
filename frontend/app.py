@@ -34,7 +34,7 @@ def greet(oiseau:str, text1:str, audio1:tuple, text2:str, audio2:tuple) -> tuple
 
     #Generate sound
     gen_res = []
-    for i in range(2):
+    for _ in range(2):
         res_gene = requests.post("http://0.0.0.0:8082/forecast_decoder", json={"Oiseau":DICO_CORR[oiseau]})
         gen_res.append(np.array(ast.literal_eval(ast.literal_eval(res_gene.text)[DICO_CORR[oiseau]]), dtype='int16'))
 
@@ -67,7 +67,12 @@ iface = gr.Interface(fn=greet,
                     outputs=["dataframe", "audio", "audio"],
 
                     title="Who is the fake bird",
-                    description="This is made to see who will imitate the best the birds of hese choice.",
+                    description='''This is our final project of my engineering school. It has been made in one month with an other student
+                                who works in cloud computing. The idea was to generate birds songs with an Artificial Intelligence. We 
+                                started with a tutorial from Valerio Velardo on sound VAE. We changed a bit the model to make it more 
+                                more complex. We trained the model on Deep Learning machins because we needed GPU. Moreover, we tried 
+                                different achitectures to find the best model.''',
+
                     theme="peach",
                     )
 

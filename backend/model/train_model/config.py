@@ -1,13 +1,17 @@
-LIEN_METADATA = "metadata.csv"
-LIEN_DIR_MP3 = "mp3/"
+LIEN_METADATA = "data/metadata.csv"
+LIEN_DIR_MP3 = "data/mp3/"
+
+# 10 oiseaux -> 12.5H 
+NB_ESPECE = 10
 
 
-NB_ESPECE = 1
-
+#Paramètre modèle
+BATCH_SIZE = 16
+EPOCH = 30
+TRIAL = 25
 
 
 #Parametre pour la découpe
-
 #Temps du silence
 SILENCE_GAP = 500
 #Niveau de son du silence
@@ -15,7 +19,6 @@ SILENCE_BAR = -32
 #Too short lenght for sing
 TOO_SHORT_LENGHT = 1.1
 #Too long sing
-
 TOO_LONG_LENGHT = 5
 
 tuning_dico = {
@@ -45,4 +48,3 @@ tuning_dico = {
         "conv_strides":(2,2,2,2, (2,1)),
     },
 }
-
