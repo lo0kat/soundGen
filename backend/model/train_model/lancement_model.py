@@ -120,7 +120,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.data or args.total or (args.debug == 0):
-        data_getter = Data_Recup("~/kaggle.json")
+        data_getter = Data_Recup("kaggle.json")
         data_getter.get_songs()
 
     meta_df = pd.read_csv(config.LIEN_METADATA)
