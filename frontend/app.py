@@ -1,23 +1,13 @@
 import gradio as gr
 import requests
 import ast
+import pandas as pd
 import numpy as np
+from correspondence_oiseau import DICO_CORR
 
 
-def reconvertion_request_res(res):
-    """
-    Change the request text into number dictionnary
-    """
-    
-    first_trad = ast.literal_eval(res.text)
-    for name in first_trad:
-        first_trad[name] = np.array(first_trad[name])
-        print(first_trad[name].shape)
+def greet(oiseau:str, text1:str, audio1:tuple, text2:str, audio2:tuple) -> tuple:
 
-    return first_trad
-
-
-def greet(text1:str, audio1:tuple, text2:str, audio2:tuple) -> tuple:
     """
     Allow you to do :
         1) The preprocessing
@@ -32,23 +22,54 @@ def greet(text1:str, audio1:tuple, text2:str, audio2:tuple) -> tuple:
         }
 
     #Send request to the FastAPI for preprocessing
-    res = requests.post("http://127.0.0.1:8000/preprocess", json=json_original)
-    #Convert the response into numbers
-    res_converted = reconvertion_request_res(res)
 
-    return "Hello World"
+    res_preprocess = requests.post("http://0.0.0.0:8080/preprocess", json=json_original)
+
+    #Ajout du type d'oiseau pour la prédiction
+    res_preprocess_tranform = ast.literal_eval(res_preprocess.text)
+    res_preprocess_tranform["Oiseau"] = DICO_CORR[oiseau]
+
+    #Send for prediction
+    res_pred = requests.post("http://0.0.0.0:8082/forecast_encoder", json=res_preprocess_tranform)
+
+    #Generate sound
+    gen_res = []
+    for i in range(2):
+        res_gene = requests.post("http://0.0.0.0:8082/forecast_decoder", json={"Oiseau":DICO_CORR[oiseau]})
+        gen_res.append(np.array(ast.literal_eval(ast.literal_eval(res_gene.text)[DICO_CORR[oiseau]]), dtype='int16'))
+
+    return pd.DataFrame(ast.literal_eval(res_pred.text), index = [1]), (22050, gen_res[0]), (22050, gen_res[1])
+
 
 
 #Permet l'enregistrement du son et sa modification de façon interactive
-text1 = gr.inputs.Textbox(type="str", label="Player 1 Name")
-audio1 = gr.inputs.Audio(source="microphone", label='Enregistrement 1', optional=False)
-text2 = gr.inputs.Textbox(type="str", label="Player 2 Name")
-audio2 = gr.inputs.Audio(source="microphone", label='Enregistrement 2', optional=False)
+text1 = gr.inputs.Textbox(type="str", 
+                        label="Player 1 Name")
+
+audio1 = gr.inputs.Audio(source="microphone", 
+                        label='First recording', 
+                        optional=False)
+
+text2 = gr.inputs.Textbox(type="str", 
+                        label="Player 2 Name")
+
+
+audio2 = gr.inputs.Audio(source="microphone", 
+                        label='Second recording', 
+                        optional=False)
+
+choix_oiseau = gr.inputs.Radio(["Pinson des arbres", "Canard", "Autruche", "Coucou"],
+                                label='Wich bird bird would you like to imitate ?')
+
 iface = gr.Interface(fn=greet,
-                    inputs=[text1, audio1, text2, audio2], 
-                    outputs="text",
+
+                    inputs=[choix_oiseau, text1, audio1, text2, audio2], 
+                    outputs=["dataframe", "audio", "audio"],
+
                     title="Who is the fake bird",
-                    description="This is made to see who will imitate the best the birds of hese choice.",)
+                    description="This is made to see who will imitate the best the birds of hese choice.",
+                    theme="peach",
+                    )
 
 
 if __name__ == "__main__":
