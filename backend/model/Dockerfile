@@ -9,3 +9,5 @@ COPY ./requirements.txt /model/requirements.txt
 
 # 
 RUN pip install --no-cache-dir --upgrade -r /model/requirements.txt
+
+WORKDIR /model/train_model
