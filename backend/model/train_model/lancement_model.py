@@ -1,3 +1,4 @@
+from ast import arg
 import numpy as np
 import argparse
 import os
@@ -12,6 +13,9 @@ from model_creator.train import ClassiqueTrain, CreateData, ParameterTuning
 from model_creator import config_default
 from model_creator.preprocess import Data_Recup
 from model_creator.use_case_model import Use_Case_Model
+
+from model_creator.use_case_model import Use_Case_Model
+
 
 def chargement_espece(metadata : pd.DataFrame, nb_espece = None) -> list:
     """
@@ -131,6 +135,7 @@ if __name__ == "__main__":
     spec = os.listdir("./preprocessed_data/"+ espece[0] +"/spectrograms")
     taille_input = np.load("./preprocessed_data/"+ espece[0] +"/spectrograms/" + spec[0]).shape
     x_train = CreateData(espece).load_music()
+
 
     if args.tuning or args.total or (args.debug == 2):
         param_tuner = ParameterTuning(config.tuning_dico, taille_input, nb_trial=config.TRIAL)

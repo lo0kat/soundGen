@@ -4,10 +4,12 @@ LIEN_DIR_MP3 = "data/mp3/"
 # 10 oiseaux -> 12.5H 
 NB_ESPECE = 10
 
+
 #Paramètre modèle
 BATCH_SIZE = 16
 EPOCH = 30
 TRIAL = 25
+
 
 #Parametre pour la découpe
 #Temps du silence

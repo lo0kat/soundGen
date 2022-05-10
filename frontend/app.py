@@ -53,6 +53,7 @@ audio1 = gr.inputs.Audio(source="microphone",
 text2 = gr.inputs.Textbox(type="str", 
                         label="Player 2 Name")
 
+
 audio2 = gr.inputs.Audio(source="microphone", 
                         label='Second recording', 
                         optional=False)
@@ -71,6 +72,7 @@ iface = gr.Interface(fn=greet,
                                 started with a tutorial from Valerio Velardo on sound VAE. We changed a bit the model to make it more 
                                 more complex. We trained the model on Deep Learning machins because we needed GPU. Moreover, we tried 
                                 different achitectures to find the best model.''',
+
                     theme="peach",
                     )
 

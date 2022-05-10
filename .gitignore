@@ -59,4 +59,5 @@ preprocessed_data
 
 wandb
 my_dir
-model
+backend/model/train_model/model
+logs
