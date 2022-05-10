@@ -84,9 +84,7 @@ jobs:
             mv ~/kaggle.json ~/"W&B.txt" train_model/
             pip install -r train_model/utils/requirements.txt
             docker build -t model-training .
-            docker run -it --rm --runtime=nvidia -v ~/Code/EISTI/PFE/soundGen/backend/model/train_model:/model/train_model model-training /bin/bash
-            python3 train_model/lancement_model.py -p PREPROCESS 0
-            exit
+            docker run --rm --runtime=nvidia -v ~/Code/EISTI/PFE/soundGen/backend/model/train_model:/model/train_model model-training "python3 train_model/lancement_model.py -p PREPROCESS 0"
             python3 train_model/utils/save.py
             ls
           '
