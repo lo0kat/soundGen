@@ -48,7 +48,7 @@ jobs:
       - name : Terraform Output
         id: tf_output
         run : |
-         export GPUADDRESS=$(terraform output -raw gpu-instance-address)
+         export GPUADDRESS=$(terraform output -raw gpu-instance-address) 
          echo "::set-output name=address::$GPUADDRESS"
 
 
@@ -71,22 +71,23 @@ jobs:
         
         run : |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          echo "$WANDB_TOKEN" > W&B.txt
-          echo "$KAGGLE_CREDS" > kaggle.json
-          scp -o StrictHostKeyChecking=no -i private_key W&B.txt kaggle.json ubuntu@${{needs.setup-infra.outputs.output1}}:~/ 
+          echo "$WANDB_TOKEN" > "W&B.txt"
+          echo "$KAGGLE_CREDS" > "kaggle.json"
+          scp -o StrictHostKeyChecking=no -i private_key "W&B.txt" "kaggle.json" ubuntu@${{needs.setup-infra.outputs.output1}}:~/ 
           ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{needs.setup-infra.outputs.output1}} '
             echo "$(whoami)"
             ls
             aws s3 ls s3://dl-model-bucket-cytech64
             sudo apt-get install -y ffmpeg
+            export PATH="$HOME/.local/bin:$PATH"
             git clone https://github.com/lo0kat/soundGen.git
             python3 -V
             cd soundGen/backend/model
             git checkout train
-            pip install -r requirements.txt
-            cd train_app
-            mv ~/kaggle.json ~/W&B.txt .
-            python3 lancement_model
+            pip3 install -r requirements.txt
+            cd train_model
+            mv ~/kaggle.json ~/"W&B.txt" .
+            python3 lancement_model.py
             ls
           '
       - name: Setup Terraform
