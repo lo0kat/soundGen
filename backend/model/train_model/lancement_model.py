@@ -9,7 +9,7 @@ from mutagen.wave import WAVE
 
 from model_creator.decoupe import find_chunks, reconstruct_chunks
 from model_creator.preprocess import Loader, Padder, LogSpectrogramExtractor, MinMaxNormaliser, Saver, PreprocessingPipeline
-from model_creator.train import ClassiqueTrain, CreateData, ParameterTuning
+from model_creator.train import ClassiqueTrain, ParameterTuning
 from model_creator import config_default
 from model_creator.preprocess import Data_Recup
 from model_creator.use_case_model import Use_Case_Model
@@ -107,6 +107,32 @@ def creation_spectrogram(espece : str) -> None:
         preprocessing_pipeline = initialisation_pipeline(spec_save_dir, min_max_save_dir)
         preprocessing_pipeline.process(file_dir)
 
+
+class CreateData:
+    def __init__(self, species_name : list) -> None:
+        self.species_name = species_name
+
+    def load_music(self):
+        """
+        First load the spectrograms construct the training song set        
+        """
+
+        x_train = []
+        for specie in self.species_name:
+            spectrograms_path = "./preprocessed_data/" + specie + "/spectrograms"
+            
+            for root, _, file_names in os.walk(spectrograms_path):
+                for file_name in file_names:
+                    file_path = os.path.join(root, file_name)
+                    spectrogram = np.load(file_path) # (n_bins, n_frames)
+                    x_train.append(spectrogram)
+
+        x_train = np.array(x_train)
+        x_train = x_train[..., np.newaxis]
+        np.random.shuffle(x_train)
+        x_train = x_train
+        
+        return x_train
 
 if __name__ == "__main__":
 
