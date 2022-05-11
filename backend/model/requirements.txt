@@ -1,4 +1,4 @@
-model_creator_bird_sing_v2
+model-creator-bird-sing-v2
 numpy == 1.18.5
 pandas
 mutagen
