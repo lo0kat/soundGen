@@ -24,8 +24,8 @@ def chargement_espece(metadata : pd.DataFrame, nb_espece = None) -> list:
     """
 
     if(nb_espece == None):
-        return pd.unique(metadata['Species'])[1:]
-    return pd.unique(metadata['Species'])[1:nb_espece + 1]
+        return pd.unique(metadata['Species'])[config.NB_ESPECE_DEJA_CHARGE:]
+    return pd.unique(metadata['Species'])[config.NB_ESPECE_DEJA_CHARGE:nb_espece + 1]
 
 
 def decoupe_son(espece : list, meta_df : pd.DataFrame) -> None:
@@ -141,8 +141,8 @@ if __name__ == "__main__":
 
 
     if args.tuning or args.total or (args.debug == 2):
+        # WANDB_API_KEY must be set beforehand in order to login to wandb
         param_tuner = ParameterTuning(config.tuning_dico, taille_input, nb_trial=config.TRIAL)
-        param_tuner.logwandb("W&B.txt")
         param_tuner.tune(x_train, batch_size=config.BATCH_SIZE, epochs=config.EPOCH)
     
     else:
