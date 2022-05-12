@@ -11,6 +11,7 @@ from model_creator.preprocess import Loader, Padder, LogSpectrogramExtractor, Mi
 from model_creator.train import ClassiqueTrain, CreateData, ParameterTuning
 from model_creator import config_default
 from model_creator.preprocess import Data_Recup
+
 from model_creator.use_case_model import Use_Case_Model
 
 def chargement_espece(metadata : pd.DataFrame, nb_espece = None, nb_deja_charge = 1) -> list:
@@ -143,3 +144,4 @@ if __name__ == "__main__":
         bird_singer.autoencoder.save("model")
         use_case = Use_Case_Model('model')
         use_case.construction_utils(espece)
+
