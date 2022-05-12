@@ -3,6 +3,7 @@ LIEN_DIR_MP3 = "mp3/"
 
 # 10 oiseaux -> 12.5H 
 NB_ESPECE = 10
+
 NB_ESPECE_DEJA_CHARGE = 10
 
 #Paramètre modèle
