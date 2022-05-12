@@ -8,9 +8,10 @@ from mutagen.wave import WAVE
 
 from model_creator.decoupe import find_chunks, reconstruct_chunks
 from model_creator.preprocess import Loader, Padder, LogSpectrogramExtractor, MinMaxNormaliser, Saver, PreprocessingPipeline
-from model_creator.train import ClassiqueTrain, CreateData, ParameterTuning
+from model_creator.train import ClassiqueTrain,CreateData,ParameterTuning
 from model_creator import config_default
 from model_creator.preprocess import Data_Recup
+
 
 from model_creator.use_case_model import Use_Case_Model
 
@@ -22,6 +23,7 @@ def chargement_espece(metadata : pd.DataFrame, nb_espece = None, nb_deja_charge 
     if(nb_espece == None):
         return pd.unique(metadata['Species'])[nb_deja_charge:]
     return pd.unique(metadata['Species'])[nb_deja_charge:nb_deja_charge + 1]
+
 
 
 def decoupe_son(espece : list, meta_df : pd.DataFrame) -> None:
@@ -105,6 +107,8 @@ def creation_spectrogram(espece : str) -> None:
         preprocessing_pipeline.process(file_dir)
 
 
+
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
@@ -117,7 +121,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.data or args.total or (args.debug == 0):
-        data_getter = Data_Recup("~/kaggle.json")
+        data_getter = Data_Recup("kaggle.json")
         data_getter.get_songs()
 
     meta_df = pd.read_csv(config.LIEN_METADATA)
@@ -134,8 +138,8 @@ if __name__ == "__main__":
     x_train = CreateData(espece).load_music()
 
     if args.tuning or args.total or (args.debug == 2):
+        # WANDB_API_KEY must be set beforehand in order to login to wandb
         param_tuner = ParameterTuning(config.tuning_dico, taille_input, nb_trial=config.TRIAL)
-        param_tuner.logwandb("W&B.txt")
         param_tuner.tune(x_train, batch_size=config.BATCH_SIZE, epochs=config.EPOCH)
     
     if args.classic or args.total or (args.debug == 3):

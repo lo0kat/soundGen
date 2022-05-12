@@ -53,3 +53,5 @@ def zip_and_upload(zip_name:str, input_dir ="model",bucket_name = "dl-model-buck
     else :
         print ('Something wrong happened during the S3 upload')
 
+if __name__ == "__main__":
+    zip_and_upload("preprocessed_data","train_model/preprocessed_data")
