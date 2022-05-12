@@ -25,7 +25,7 @@ def chargement_espece(metadata : pd.DataFrame, nb_espece = None) -> list:
 
     if(nb_espece == None):
         return pd.unique(metadata['Species'])[config.NB_ESPECE_DEJA_CHARGE:]
-    return pd.unique(metadata['Species'])[config.NB_ESPECE_DEJA_CHARGE:nb_espece + 1]
+    return pd.unique(metadata['Species'])[config.NB_ESPECE_DEJA_CHARGE:config.NB_ESPECE_DEJA_CHARGE+nb_espece + 1]
 
 
 def decoupe_son(espece : list, meta_df : pd.DataFrame) -> None:
