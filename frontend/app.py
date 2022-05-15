@@ -15,6 +15,7 @@ def greet(oiseau:str, text1:str, audio1:tuple, text2:str, audio2:tuple) -> tuple
         3) Make the prediction
     """
 
+
     #Prepare data into json for sending
     json_original = {
         text1: [str(audio1[0]), str(list(audio1[1]))],
@@ -40,7 +41,8 @@ def greet(oiseau:str, text1:str, audio1:tuple, text2:str, audio2:tuple) -> tuple
 
     return pd.DataFrame(ast.literal_eval(res_pred.text), index = [1]), (22050, gen_res[0]), (22050, gen_res[1])
 
-
+# Donne la liste des noms des espèces en Français
+species_list = list(DICO_CORR.keys())
 
 #Permet l'enregistrement du son et sa modification de façon interactive
 text1 = gr.inputs.Textbox(type="str", 
@@ -58,7 +60,7 @@ audio2 = gr.inputs.Audio(source="microphone",
                         label='Second recording', 
                         optional=False)
 
-choix_oiseau = gr.inputs.Radio(["Pinson des arbres", "Canard", "Autruche", "Coucou"],
+choix_oiseau = gr.inputs.Radio(species_list,
                                 label='Wich bird bird would you like to imitate ?')
 
 iface = gr.Interface(fn=greet,

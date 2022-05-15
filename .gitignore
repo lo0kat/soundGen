@@ -61,3 +61,5 @@ wandb
 my_dir
 backend/model/train_model/model
 logs
+
+model_trained
