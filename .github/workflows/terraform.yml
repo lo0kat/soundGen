@@ -75,7 +75,7 @@ jobs:
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           echo "$WANDB_TOKEN" > "W&B.txt"
           echo "$KAGGLE_CREDS" > "kaggle.json"
-          scp -ro StrictHostKeyChecking=no -i private_key "train_model" "Dockerfile" ubuntu@${{needs.setup-infra.outputs.output1}}:~/ 
+          scp -ro StrictHostKeyChecking=no -i private_key "train_model" "Dockerfile" "requirements.txt" ubuntu@${{needs.setup-infra.outputs.output1}}:~/ 
           scp -o StrictHostKeyChecking=no -i private_key "W&B.txt" "kaggle.json" ubuntu@${{needs.setup-infra.outputs.output1}}:~/train_model/ 
           ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{needs.setup-infra.outputs.output1}} '
             ls
