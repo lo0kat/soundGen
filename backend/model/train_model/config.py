@@ -2,13 +2,13 @@ LIEN_METADATA = "metadata.csv"
 LIEN_DIR_MP3 = "mp3/"
 
 # 10 oiseaux -> 12.5H 
-NB_ESPECE = 10
+NB_ESPECE = 1
 
 NB_ESPECE_DEJA_CHARGE = 10
 
 #Paramètre modèle
-BATCH_SIZE = 16
-EPOCH = 30
+BATCH_SIZE = 8
+EPOCH = 2
 TRIAL = 25
 
 

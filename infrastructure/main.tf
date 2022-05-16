@@ -85,11 +85,7 @@ resource "aws_instance" "training_instance" {
   key_name               = "ML_ICC_key"
   vpc_security_group_ids = [aws_security_group.web-sg.id]
 
-  user_data            = <<-EOF
-              #!/bin/bash
-              apt-get update
-              apt-get install -y git 
-              EOF
+
   iam_instance_profile = aws_iam_instance_profile.web_instance_profile.id
 }
 
