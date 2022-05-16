@@ -80,8 +80,8 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{needs.setup-infra.outputs.output1}} '
             ls
             docker build -t model-training .
-            aws s3 cp s3://dl-model-bucket-cytech64/preprocessed_data.zip . >/dev/null
-            unzip preprocessed_data -d train_model/preprocessed_data >/dev/null
+            aws s3 cp s3://dl-model-bucket-cytech64/preprocessed_data.zip . 
+            unzip preprocessed_data -d train_model/preprocessed_data 
             aws s3 cp s3://dl-model-bucket-cytech64/metadata.csv train_model
             docker run -t --rm --runtime=nvidia -v ~/train_model:/model/train_model model-training python3 train_model/lancement_model.py -c CLASSIC 3 
             sudo python3 train_model/utils/save.py "model_auto_train" "train_model/model"
