@@ -88,7 +88,6 @@ jobs:
           '
       - name: Setup Terraform
         if: always()
-        needs : remoteexec
         uses: hashicorp/setup-terraform@v1
         with:
           # terraform_version: 0.13.0:
