@@ -14,6 +14,7 @@ jobs:
     uses : ./.github/workflows/preprocessing.yml
 
   setup-infra:
+    needs: preprocessing
     runs-on: ubuntu-20.04
     outputs:
       output1: ${{ steps.tf_output.outputs.address }}
