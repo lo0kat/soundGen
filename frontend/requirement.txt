@@ -1,4 +1,0 @@
-gradio==2.9.4
-numpy==1.18.5
-requests==2.27.1
-pandas==1.4.1
