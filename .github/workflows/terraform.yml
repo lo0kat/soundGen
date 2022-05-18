@@ -10,7 +10,6 @@ defaults:
     
 jobs:
   preprocessing:
-    runs-on: ubuntu-20.04
     steps:
       - name: Preprocessing need
         working-directory: ~/
@@ -22,7 +21,6 @@ jobs:
         if: always() && (steps.preproc.outcome == 'skipped')
         run: |
           exit 0
-
   setup-infra:
     needs: preprocessing
     if: always() && (needs.preproccessing.result == 'success')
