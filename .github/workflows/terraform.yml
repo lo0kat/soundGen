@@ -10,12 +10,18 @@ defaults:
     
 jobs:
   preprocessing:
-    if: ${{ github.event.client_payload.preprocessing  == 1 }}
-    uses : ./.github/workflows/preprocessing.yml
-
+    steps:
+      - name: Preprocessing need
+        id: preproc
+        if: ${{ github.event.client_payload.preprocessing  == 1 }}
+        uses : ./.github/workflows/preprocessing.yml
+      - name : Preprocess Status
+        if: always() && (steps.preproc.outcome == 'skipped')
+        run: |
+          exit 0
   setup-infra:
     needs: preprocessing
-    if: always() && (needs.preproccessing.result == 'skipped' || needs.preproccessing.result == 'success')
+    if: always() && (needs.preproccessing.result == 'success')
     runs-on: ubuntu-20.04
     outputs:
       output1: ${{ steps.tf_output.outputs.address }}
