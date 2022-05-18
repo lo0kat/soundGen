@@ -1,0 +1,17 @@
+name: "Preprocessing"
+
+on:
+  workflow_call:
+
+defaults:
+      run:
+        working-directory: ./infrastructure
+    
+jobs:
+  setup-infra:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        run: echo "Processing part"
+
+    
