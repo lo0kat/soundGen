@@ -70,31 +70,30 @@ jobs:
         run: sleep 30
       
       - name : SSH Connection
+        id: remoteexec
         env:
             PRIVATE_KEY: ${{ secrets.AWS_EC2_PRIVATE_KEY  }}
             WANDB_TOKEN: ${{ secrets.WANDB_API_TOKEN  }}
             KAGGLE_CREDS: ${{ secrets.KAGGLE_API_CREDS  }}
-        
+        working-directory: backend/model
         run : |
+          ls
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           echo "$WANDB_TOKEN" > "W&B.txt"
           echo "$KAGGLE_CREDS" > "kaggle.json"
-          scp -o StrictHostKeyChecking=no -i private_key "W&B.txt" "kaggle.json" ubuntu@${{needs.setup-infra.outputs.output1}}:~/ 
+          scp -ro StrictHostKeyChecking=no -i private_key "train_model" "Dockerfile" "requirements.txt" ubuntu@${{needs.setup-infra.outputs.output1}}:~/ 
+          scp -o StrictHostKeyChecking=no -i private_key "W&B.txt" "kaggle.json" ubuntu@${{needs.setup-infra.outputs.output1}}:~/train_model/ 
           ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{needs.setup-infra.outputs.output1}} '
             ls
-            aws s3 ls s3://dl-model-bucket-cytech64
-            git clone https://github.com/lo0kat/soundGen.git
-            python3 -V
-            cd soundGen/backend/model/
-            git checkout train
-            mv ~/kaggle.json ~/"W&B.txt" train_model/
-            pip install -r train_model/utils/requirements.txt
             docker build -t model-training .
-            docker run --rm --runtime=nvidia -v ~/Code/EISTI/PFE/soundGen/backend/model/train_model:/model/train_model model-training "python3 train_model/lancement_model.py -p PREPROCESS 0"
-            python3 train_model/utils/save.py
-            ls
+            aws s3 cp s3://dl-model-bucket-cytech64/preprocessed_data.zip . 
+            unzip preprocessed_data -d train_model/preprocessed_data 
+            aws s3 cp s3://dl-model-bucket-cytech64/metadata.csv train_model
+            docker run -t --rm --runtime=nvidia -v ~/train_model:/model/train_model model-training python3 lancement_model.py -c CLASSIC 3 
+            sudo python3 train_model/utils/save.py "model_auto_train" "train_model/model"
           '
       - name: Setup Terraform
+        if: always()
         uses: hashicorp/setup-terraform@v1
         with:
           # terraform_version: 0.13.0:
