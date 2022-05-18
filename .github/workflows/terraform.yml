@@ -15,7 +15,7 @@ jobs:
 
   setup-infra:
     needs: preprocessing
-    if: always() 
+    if: always() && (github.event.client_payload.training  == 1)
     runs-on: ubuntu-20.04
     outputs:
       output1: ${{ steps.tf_output.outputs.address }}
@@ -58,6 +58,7 @@ jobs:
 
 
   modelcomputation:
+    if: always() && (github.event.client_payload.training  == 1)
     needs : setup-infra
     runs-on: ubuntu-20.04
    
