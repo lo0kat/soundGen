@@ -15,7 +15,7 @@ jobs:
 
   setup-infra:
     needs: preprocessing
-    if: success() || (jobs.preproccessing.outcome == 'skipped')
+    if: always() && (needs.preproccessing.result == 'skipped' || needs.preproccessing.result == 'success')
     runs-on: ubuntu-20.04
     outputs:
       output1: ${{ steps.tf_output.outputs.address }}
