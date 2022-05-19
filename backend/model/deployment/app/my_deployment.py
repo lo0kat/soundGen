@@ -38,4 +38,4 @@ def get_pred_decoder(input_user : dict) -> dict:
   return gene.gen_sound(oiseau)
 
 if __name__ == "__main__":
-  uvicorn.run("my_deployement:app", host="0.0.0.0", port=8082, reload = True)
+  uvicorn.run("my_deployment:app", host="0.0.0.0", port=8082, reload = True)

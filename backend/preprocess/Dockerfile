@@ -1,12 +1,19 @@
 FROM python:3.8.10-slim
 
-WORKDIR /app
+# 
+WORKDIR /preprocess
 
-COPY requirements.txt .
-RUN pip install -r requirements.txt
 
-COPY . .
+RUN apt-get update && apt-get install -y libsndfile1 ffmpeg 
 
-EXPOSE 8080
+# 
+COPY ./requirements.txt /preprocess/requirements.txt
 
-CMD ["python3", "main.py"]
+# 
+RUN pip install --no-cache-dir --upgrade -r /preprocess/requirements.txt
+
+# 
+COPY ./app /preprocess/app
+
+# 
+ CMD ["python3","app/main.py"]

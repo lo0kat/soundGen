@@ -1,0 +1,29 @@
+services:
+  
+  client-gradio:
+    build: ./frontend
+    volumes:
+      - "./frontend:/frontend"
+    ports:
+      - "7860:7860"
+    depends_on:
+      - preprocessing-api
+      - prediction-api
+
+  prediction-api:
+    build: ./backend/model/deployment
+    volumes:
+      - "./backend/model/deployment:/deployment"
+    ports:
+      - "8082:8082"
+    depends_on:
+      - preprocessing-api
+
+  preprocessing-api:
+    build: ./backend/preprocess
+    volumes:
+      - "./backend/preprocess:/preprocess"
+    ports:
+      - "8080:8080"
+ 
+

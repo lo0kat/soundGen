@@ -13,6 +13,5 @@ DICO_CORR = {
     "Fauvette à tête noire":"Sylvia_atricapilla",
     "Fauvette grisette":"Sylvia_communis",
     "Merle noir":"Turdus_merula",
-    "Grive musicienne":"Turdus_philomelos"
-
+    "Grive musicienne":"Turdus_philomelos",
 }
