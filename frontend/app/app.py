@@ -70,16 +70,14 @@ iface = gr.Interface(fn=greet,
                     outputs=["dataframe", "audio", "audio"],
 
                     title="Who is the fake bird",
-                    description='''This is our final project of my engineering school. It has been made in one month with an other student
-                                who works in cloud computing. The idea was to generate birds songs with an Artificial Intelligence. We 
-                                started with a tutorial from Valerio Velardo on sound VAE. We changed a bit the model to make it more 
-                                more complex. We trained the model on Deep Learning machins because we needed GPU. Moreover, we tried 
-                                different achitectures to find the best model.''',
+                    description='''This is the final project for our computer science engineering school. It has been made in one month in collaboration with another student
+                                who has a cloud computing background. The goal was to process and generate bird songs with Artificial Intelligence. We 
+                                started with a tutorial from Valerio Velardo on sound VAE then we modified the model to make it
+                                more complex. Finally we trained it utilizing the power of remote GPUS in the public cloud provider AWS with Deep Learning Virtual Machines. Moreover, we tried 
+                                different architectures to find the best model.''',
 
                     theme="peach",
                     )
 
 
-if __name__ == "__main__":
-    print(species_list)
-    app, local_url, share_url = iface.launch(server_name="0.0.0.0")
+iface.launch(server_name="0.0.0.0")
