@@ -24,22 +24,19 @@ def greet(oiseau:str, text1:str, audio1:tuple, text2:str, audio2:tuple) -> tuple
 
     #Send request to the FastAPI for preprocessing
 
-    res_preprocess = requests.post("http://0.0.0.0:8080/preprocess", json=json_original)
-    #res_preprocess = requests.post("http://soundgen_preprocessing-api_1:8080/preprocess", json=json_original)
+    res_preprocess = requests.post("http://soundgen_preprocessing-api_1:8080/preprocess", json=json_original)
 
     #Ajout du type d'oiseau pour la prédiction
     res_preprocess_tranform = ast.literal_eval(res_preprocess.text)
     res_preprocess_tranform["Oiseau"] = DICO_CORR[oiseau]
 
     #Send for prediction
-    res_pred = requests.post("http://0.0.0.0:8082/forecast_encoder", json=res_preprocess_tranform)
-    # res_pred = requests.post("http://soundgen_prediction-api_1:8082/forecast_encoder", json=res_preprocess_tranform)
+    res_pred = requests.post("http://soundgen_prediction-api_1:8082/forecast_encoder", json=res_preprocess_tranform)
 
     #Generate sound
     gen_res = []
     for _ in range(2):
-        res_gene = requests.post("http://0.0.0.0:8082/forecast_decoder", json={"Oiseau":DICO_CORR[oiseau]})
-        # res_gene = requests.post("http://soundgen_prediction-api_1:8082/forecast_decoder", json={"Oiseau":DICO_CORR[oiseau]})
+        res_gene = requests.post("http://soundgen_prediction-api_1:8082/forecast_decoder", json={"Oiseau":DICO_CORR[oiseau]})
         gen_res.append(np.array(ast.literal_eval(ast.literal_eval(res_gene.text)[DICO_CORR[oiseau]]), dtype='int16'))
 
     return pd.DataFrame(ast.literal_eval(res_pred.text), index = [1]), (22050, gen_res[0]), (22050, gen_res[1])
