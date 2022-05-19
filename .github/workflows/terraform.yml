@@ -1,16 +1,23 @@
 name: "Terraform"
 
-on:
-  push:
-    branches:
-      - train
+on: 
+  repository_dispatch:
+      types: [training-infra]
 
 defaults:
       run:
         working-directory: ./infrastructure
     
 jobs:
+  preprocessing:
+    if: ${{ github.event.client_payload.preprocessing  == 1 }}
+    uses : ./.github/workflows/preprocessing.yml
+
   setup-infra:
+    needs: preprocessing
+    if: |
+      !cancelled()  && 
+      (github.event.client_payload.training  == 1)
     runs-on: ubuntu-20.04
     outputs:
       output1: ${{ steps.tf_output.outputs.address }}
@@ -53,6 +60,9 @@ jobs:
 
 
   modelcomputation:
+    if: |
+      !cancelled()  && 
+      (github.event.client_payload.training  == 1)
     needs : setup-infra
     runs-on: ubuntu-20.04
    
