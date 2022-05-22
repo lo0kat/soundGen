@@ -15,6 +15,7 @@ A Full-Stack Python application for birdsong sound processing using Deep Learnin
 - docker-compose (1.29.2)
 
 ## **Running the App**
+First, copy the model_trained directory (given privately) at the **_backend/model/deployment/_** location. Then create the empty directory **_backend/preprocess/tmp_preprocess_**  
 In the project's root directory :
 ```sh
 $ docker-compose up

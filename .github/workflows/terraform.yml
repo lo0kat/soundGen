@@ -104,8 +104,10 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
       
       - name: Terraform Init
+        if: always()
         id: init
         run: terraform init
       
       - name: Terraform Destroy
+        if: always()
         run: terraform destroy -auto-approve -target aws_instance.training_instance -target aws_security_group.sg -target random_pet.sg
